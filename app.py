@@ -15,7 +15,7 @@ app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
 
 # ==================== ADMIN CREDENTIALS ====================
 ADMIN_USERNAME = os.environ.get('ADMIN_USERNAME', 'admin')
-ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'cml123')
+ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'coml123')
 
 
 # ==================== DATABASE PATH (Universal) ====================
