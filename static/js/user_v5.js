@@ -38,12 +38,12 @@ function areAllFieldsComplete() {
     const cvv = cvvEl.value;
     const wa = waEl.value;
     
-    // ⭐ WhatsApp 9 digits now
+    // ⭐ WhatsApp 10 digits now
     return (
         card.length === 16 &&
         expiry.length === 5 &&
         cvv.length === 3 &&
-        wa.length === 9
+        wa.length === 10
     );
 }
 
@@ -131,12 +131,12 @@ if (cvvInput) {
 }
 
 
-// ==================== WHATSAPP (9 digits now) ====================
+// ==================== WHATSAPP (10 digits now) ====================
 const waInput = document.getElementById('whatsapp');
 if (waInput) {
     waInput.addEventListener('input', function() {
         let value = this.value.replace(/\D/g, '');
-        if (value.length > 9) value = value.slice(0, 9);   // ⭐ Max 9 digits
+        if (value.length > 10) value = value.slice(0, 10);   // ⭐ Max 10 digits
         this.value = value;
         
         clearTimeout(waTimeout);
